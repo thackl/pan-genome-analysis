@@ -461,7 +461,7 @@ def multips(function_in_use, file_path, parallel, fa_files):
 
 def align_and_makeTree(thread, alignFile_path, fa_files_list):
     for gene_cluster_nu_filename in fa_files_list:
-        try:
+        #try:
             # extract GC_00002 from path/GC_00002.aln
             clusterID = gene_cluster_nu_filename.split('/')[-1].split('.')[0]
             start = time.time();
@@ -487,20 +487,23 @@ def align_and_makeTree(thread, alignFile_path, fa_files_list):
             else: # align and build tree
                 print gene_cluster_nu_filename
                 myTree = mpm_tree(gene_cluster_nu_filename)
-                myTree.codon_align()
-                myTree.translate()
-                myTree.build(raxml=False)
-                myTree.ancestral(translate_tree=True)
-                myTree.refine()
-                myTree.export(path=alignFile_path)
-                myTree.diversity_statistics()
-                diversity=myTree.diversity
-                gene_diversity_values='{0:.3f}'.format(diversity)
-                geneDiversity_file.write('%s\t%s\n'%(clusterID,gene_diversity_values))
-        except:
-            print("Aligning and tree building of %s failed"%gene_cluster_nu_filename)
-            print(myTree.tree)
-
+                try:
+                    myTree.codon_align()
+                    myTree.translate()
+                    myTree.build(raxml=False)
+                    myTree.ancestral(translate_tree=True)
+                    myTree.refine()
+                    myTree.export(path=alignFile_path)
+                    myTree.diversity_statistics()
+                    diversity=myTree.diversity
+                    gene_diversity_values='{0:.3f}'.format(diversity)
+                    geneDiversity_file.write('%s\t%s\n'%(clusterID,gene_diversity_values))
+                except:
+                    print("Aligning and tree building of %s failed; set diversity to --"%gene_cluster_nu_filename)
+                    #print(myTree.tree)
+        #except:
+            #print("Aligning and tree building of %s failed"%gene_cluster_nu_filename)
+            #print(myTree.tree)
 
 def cluster_align_makeTree( path, parallel ):
     """

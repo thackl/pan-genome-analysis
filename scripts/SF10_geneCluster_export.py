@@ -118,6 +118,12 @@ def geneCluster_to_json(path):
 
         ## write json
         newline='{"geneId":%d,"geneLen":%d,"count": %d,"dupli":"%s","dup_detail": "%s","ann":"%s","msa":"%s","divers":"%s","event":"%s","allAnn":"%s", "GName":"%s", "allGName":"%s", "locus":"%s"}'
+
+        ## when align-makeTree failed and diversity not written, 
+        ## using '--' to indicate problematic sequences from data source
+        if clusterID not in gene_diversity_Dt:
+            gene_diversity_Dt[clusterID]='--'
+
         write_file_lst_json.write(newline%(gid+1, geneClusterLength, strain_count, duplicated_state,
                                            dup_detail,majority_annotation, geneCluster_aln,
                                            gene_diversity_Dt[clusterID],gene_event, allAnn, majority_geneName, all_geneName, locus_tag_strain))
